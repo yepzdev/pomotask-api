@@ -6,7 +6,7 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     // Establecer el modo de error de PDO a excepción
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
+} catch (PDOException $e) {
     die("Conexión fallida: " . $e->getMessage());
 }
 
@@ -43,7 +43,33 @@ switch ($method) {
         echo json_encode(array("message" => "Tarea creada correctamente"));
         break;
 
-    // Aquí puedes manejar los casos para PUT y DELETE si los necesitas
+
+    case 'PUT':
+        // Editar una tarea existente
+        parse_str(file_get_contents("php://input"), $data);
+        $id = $data['id'];
+        $contenido = $data['contenido'];
+        $score = $data['score'];
+        $spected = $data['spected'];
+        $actual = $data['actual'];
+        $completada = $data['completada'];
+
+        $sql = "UPDATE tareas SET contenido=?, score=?, spected=?, actual=?, completada=? WHERE id=?";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$contenido, $score, $spected, $actual, $completada, $id]);
+        echo json_encode(array("message" => "Tarea actualizada correctamente"));
+        break;
+
+    case 'DELETE':
+        // Eliminar una tarea
+        parse_str(file_get_contents("php://input"), $data);
+        $id = $data['id'];
+
+        $sql = "DELETE FROM tareas WHERE id=?";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$id]);
+        echo json_encode(array("message" => "Tarea eliminada correctamente"));
+        break;
 
     default:
         echo json_encode(array("message" => "Método no permitido"));
@@ -51,4 +77,3 @@ switch ($method) {
 }
 
 $conn = null; // Cerrar la conexión
-?>
