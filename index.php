@@ -1,9 +1,6 @@
 <?php
-// Configurar conexión a la base de datos con PDO
-$servername = "localhost";
-$username = "tu_usuario";
-$password = "tu_contraseña";
-$dbname = "tu_base_de_datos";
+// database configuration with PDO driver
+require 'config.php';
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
