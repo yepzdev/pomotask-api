@@ -23,7 +23,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 switch ($method) {
     case 'GET':
         // Obtener todas las tareas
-        $stmt = $conn->query("SELECT * FROM tareas");
+        $stmt = $conn->query("SELECT * FROM tasks");
         $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode($tasks);
         break;
