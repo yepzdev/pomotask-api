@@ -1,7 +1,7 @@
 <?php
-// database configuration with PDO driver
-require 'config.php';
+require 'config/config.php';
 
+// database configuration with PDO driver
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     // Establecer el modo de error de PDO a excepción
