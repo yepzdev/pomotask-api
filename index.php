@@ -23,7 +23,8 @@ $method = $_SERVER['REQUEST_METHOD'];
 switch ($method) {
     case 'GET':
         // Obtener todas las tareas
-        $stmt = $conn->query("SELECT * FROM tasks");
+        // $stmt = $conn->query("SELECT * FROM tasks");
+        $stmt = $conn->query("SELECT * FROM tasks INNER JOIN pomodoro ON tasks.id = pomodoro.task_id");
         $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode($tasks);
         break;
