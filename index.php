@@ -64,10 +64,10 @@ switch ($method) {
         // Eliminar una tarea
 
         // obtenemos los datos del body
-        $data = file_get_contents("php://input");
+        $string = file_get_contents("php://input");
         // convertimos a matriz asociativa
-        $data_arr = json_decode($data, true);
-        $id = $data_arr['id'];
+        $data = json_decode($string, true);
+        $id = $data['id'];
         // Establecer una transacción para garantizar que ambas eliminaciones se realicen correctamente o se deshagan en caso de error
         $conn->beginTransaction();
 
