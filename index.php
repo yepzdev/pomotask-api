@@ -74,18 +74,40 @@ switch ($method) {
 
     case 'PUT':
         // Editar una tarea existente
-        parse_str(file_get_contents("php://input"), $data);
-        $id = $data['id'];
-        $contenido = $data['contenido'];
-        $score = $data['score'];
-        $spected = $data['spected'];
-        $actual = $data['actual'];
-        $completada = $data['completada'];
+        $string = file_get_contents("php://input");
+        $data = json_decode($string, true);
 
-        $sql = "UPDATE tareas SET contenido=?, score=?, spected=?, actual=?, completada=? WHERE id=?";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$contenido, $score, $spected, $actual, $completada, $id]);
-        echo json_encode(array("message" => "Tarea actualizada correctamente"));
+        $id = filter_string_polyfill($data['id']);
+        $description = filter_string_polyfill($data['description']);
+        $status = filter_string_polyfill($data['status']);
+        $spected = filter_string_polyfill($data['spected']);
+        $current = filter_string_polyfill($data['current']);
+        $completed = filter_string_polyfill($data['completed']);
+
+        $conn->beginTransaction();
+
+        try {
+            $sql1 = "UPDATE tasks SET description = :description, status = :status WHERE id = :id";
+            $stmt1 = $conn->prepare($sql1);
+            $stmt1->bindParam(':description', $description);
+            $stmt1->bindParam(':status', $status);
+            $stmt1->bindParam(':id', $id);
+            $stmt1->execute();
+
+            $sql2 = "UPDATE pomodoro SET spected = :spected, current = :current WHERE task_id = :id";
+            $stmt2 = $conn->prepare($sql2);
+            $stmt2->bindParam(':spected', $spected);
+            $stmt2->bindParam(':current', $current);
+            $stmt2->bindParam(':id', $id);
+            $stmt2->execute();
+
+            $conn->commit();
+            echo json_encode(array("message" => "Tarea creada correctamente"));
+        } catch (Exception $e) {
+            $conn->rollBack();
+            echo json_encode(array("message" => "Error al actualizar tarea: " . $e->getMessage()));
+        }
+
         break;
 
     case 'DELETE':
