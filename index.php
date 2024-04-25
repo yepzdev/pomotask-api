@@ -117,7 +117,7 @@ switch ($method) {
         $string = file_get_contents("php://input");
         // convertimos a matriz asociativa
         $data = json_decode($string, true);
-        $id = $data['id'];
+        $id = filter_string_polyfill($data['id']);
         // Establecer una transacción para garantizar que ambas eliminaciones se realicen correctamente o se deshagan en caso de error
         $conn->beginTransaction();
 
