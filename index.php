@@ -62,13 +62,37 @@ switch ($method) {
 
     case 'DELETE':
         // Eliminar una tarea
-        parse_str(file_get_contents("php://input"), $data);
-        $id = $data['id'];
 
-        $sql = "DELETE FROM tareas WHERE id=?";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$id]);
-        echo json_encode(array("message" => "Tarea eliminada correctamente"));
+        // obtenemos los datos del body
+        $data = file_get_contents("php://input");
+        // convertimos a matriz asociativa
+        $data_arr = json_decode($data, true);
+        $id = $data_arr['id'];
+        // Establecer una transacción para garantizar que ambas eliminaciones se realicen correctamente o se deshagan en caso de error
+        $conn->beginTransaction();
+
+        try {
+            $sql1 = "DELETE FROM tasks WHERE id = :id";
+            $stmt1 = $conn->prepare($sql1);
+            $stmt1->bindParam(':id', $id);
+            $stmt1->execute();
+
+            $sql2 = "DELETE FROM pomodoro WHERE task_id = :task_id";
+            $stmt2 = $conn->prepare($sql2);
+            $stmt2->bindParam(':task_id', $id);
+            $stmt2->execute();
+        
+            // Confirmar la transacción si ambas eliminaciones se realizaron correctamente
+            $conn->commit();
+
+            echo json_encode(array("message" => "Tarea eliminada correctamente"));
+        } catch (Exception $e) {
+            // revertir la transaccion en caso de error;
+
+            $conn->rollBack();
+            echo json_encode(array("message" => "Error al eliminar registros: " . $e->getMessage()));
+        }
+
         break;
 
     default:
