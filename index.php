@@ -30,17 +30,41 @@ switch ($method) {
 
     case 'POST':
         // Crear una nueva tarea
-        $data = json_decode(file_get_contents('php://input'), true);
-        $contenido = $data['contenido'];
-        $score = $data['score'];
-        $spected = $data['spected'];
-        $actual = $data['actual'];
-        $completada = $data['completada'];
 
-        $sql = "INSERT INTO tareas (contenido, score, spected, actual, completada) VALUES (?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$contenido, $score, $spected, $actual, $completada]);
-        echo json_encode(array("message" => "Tarea creada correctamente"));
+        $string = file_get_contents("php://input");
+        $data = json_decode($string, true);
+
+        $description = $data['description'];
+        $status = $data['status'];
+        $spected = $data['spected'];
+        $current = $data['current'];
+        $completed = $data['completed'];
+
+        $conn->beginTransaction();
+
+        try {
+            $sql1 = "INSERT INTO tasks (description, status) VALUES (:description, :status)";
+            $stmt1 = $conn->prepare($sql1);
+            $stmt1->bindParam(':description', $description);
+            $stmt1->bindParam(':status', $status);
+            $stmt1->execute();
+
+            $task_id = $conn->lastInsertId();
+
+            $sql2 = "INSERT INTO pomodoro (task_id, spected, current) VALUES (:task_id, :spected, :current)";
+            $stmt2 = $conn->prepare($sql2);
+            $stmt2->bindParam(':task_id', $task_id);
+            $stmt2->bindParam(':spected', $spected);
+            $stmt2->bindParam(':current', $current);
+            $stmt2->execute();
+
+            $conn->commit();
+            echo json_encode(array("message" => "Tarea creada correctamente"));
+        } catch (Exception $e) {
+            $conn->rollBack();
+            echo json_encode(array("message" => "Error al eliminar registros: " . $e->getMessage()));
+        }
+
         break;
 
 
