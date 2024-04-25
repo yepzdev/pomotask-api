@@ -19,6 +19,10 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 // Obtener el método de la solicitud
 $method = $_SERVER['REQUEST_METHOD'];
 
+function filter_string_polyfill(string $string): string {
+    return preg_replace("/[^A-Za-z0-9 ]/", '', $string);
+}
+
 // Manejar las solicitudes GET, POST, PUT, DELETE
 switch ($method) {
     case 'GET':
@@ -34,11 +38,11 @@ switch ($method) {
         $string = file_get_contents("php://input");
         $data = json_decode($string, true);
 
-        $description = $data['description'];
-        $status = $data['status'];
-        $spected = $data['spected'];
-        $current = $data['current'];
-        $completed = $data['completed'];
+        $description = filter_string_polyfill($data['description']);
+        $status = filter_string_polyfill($data['status']);
+        $spected = filter_string_polyfill($data['spected']);
+        $current = filter_string_polyfill($data['current']);
+        $completed = filter_string_polyfill($data['completed']);
 
         $conn->beginTransaction();
 
