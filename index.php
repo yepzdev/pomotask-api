@@ -63,10 +63,10 @@ switch ($method) {
             $stmt2->execute();
 
             $conn->commit();
-            echo json_encode(array("message" => "Tarea creada correctamente"));
+            echo json_encode(array("message" => "task inserted correctly"));
         } catch (Exception $e) {
             $conn->rollBack();
-            echo json_encode(array("message" => "Error al eliminar registros: " . $e->getMessage()));
+            echo json_encode(array("message" => "error inserting task: " . $e->getMessage()));
         }
 
         break;
@@ -102,10 +102,10 @@ switch ($method) {
             $stmt2->execute();
 
             $conn->commit();
-            echo json_encode(array("message" => "Tarea creada correctamente"));
+            echo json_encode(array("message" => "task updated successfully"));
         } catch (Exception $e) {
             $conn->rollBack();
-            echo json_encode(array("message" => "Error al actualizar tarea: " . $e->getMessage()));
+            echo json_encode(array("message" => "error updating task: " . $e->getMessage()));
         }
 
         break;
@@ -135,18 +135,18 @@ switch ($method) {
             // Confirmar la transacción si ambas eliminaciones se realizaron correctamente
             $conn->commit();
 
-            echo json_encode(array("message" => "Tarea eliminada correctamente"));
+            echo json_encode(array("message" => "task deleted successfully"));
         } catch (Exception $e) {
             // revertir la transaccion en caso de error;
 
             $conn->rollBack();
-            echo json_encode(array("message" => "Error al eliminar registros: " . $e->getMessage()));
+            echo json_encode(array("message" => "task could not be deleted: " . $e->getMessage()));
         }
 
         break;
 
     default:
-        echo json_encode(array("message" => "Método no permitido"));
+        echo json_encode(array("message" => "method not allowed"));
         break;
 }
 
