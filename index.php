@@ -42,7 +42,7 @@ switch ($method) {
         $status = filter_string_polyfill($data['status']);
         $spected = filter_string_polyfill($data['spected']);
         $current = filter_string_polyfill($data['current']);
-        $completed = filter_string_polyfill($data['completed']);
+        $completed = filter_string_polyfill($data['highlighted']);
 
         $conn->beginTransaction();
 
@@ -82,11 +82,12 @@ switch ($method) {
         $status = filter_string_polyfill($data['status']);
         $spected = filter_string_polyfill($data['spected']);
         $current = filter_string_polyfill($data['current']);
-        $completed = filter_string_polyfill($data['completed']);
+        $completed = filter_string_polyfill($data['highlighted']);
 
         $conn->beginTransaction();
 
         try {
+            // $sql1 = "UPDATE tasks SET description = :description, status = :status WHERE id = :id";
             $sql1 = "UPDATE tasks SET description = :description, status = :status WHERE id = :id";
             $stmt1 = $conn->prepare($sql1);
             $stmt1->bindParam(':description', $description);
