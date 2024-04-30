@@ -42,15 +42,16 @@ switch ($method) {
         $status = filter_string_polyfill($data['status']);
         $spected = filter_string_polyfill($data['spected']);
         $current = filter_string_polyfill($data['current']);
-        $completed = filter_string_polyfill($data['highlighted']);
+        $highlighted = filter_string_polyfill($data['highlighted']);
 
         $conn->beginTransaction();
 
         try {
-            $sql1 = "INSERT INTO tasks (description, status) VALUES (:description, :status)";
+            $sql1 = "INSERT INTO tasks (description, status, highlighted) VALUES (:description, :status, :highlighted)";
             $stmt1 = $conn->prepare($sql1);
             $stmt1->bindParam(':description', $description);
             $stmt1->bindParam(':status', $status);
+            $stmt1->bindParam(':highlighted', $highlighted);
             $stmt1->execute();
 
             $task_id = $conn->lastInsertId();
@@ -78,34 +79,36 @@ switch ($method) {
         $data = json_decode($string, true);
 
         $id = filter_string_polyfill($data['id']);
-        $description = filter_string_polyfill($data['description']);
         $status = filter_string_polyfill($data['status']);
-        $spected = filter_string_polyfill($data['spected']);
-        $current = filter_string_polyfill($data['current']);
-        $completed = filter_string_polyfill($data['highlighted']);
+        // $description = filter_string_polyfill($data['description']);
+        // $spected = filter_string_polyfill($data['spected']);
+        // $current = filter_string_polyfill($data['current']);
+        // $completed = filter_string_polyfill($data['highlighted']);
 
-        $conn->beginTransaction();
+        // $conn->beginTransaction();
 
         try {
             // $sql1 = "UPDATE tasks SET description = :description, status = :status WHERE id = :id";
-            $sql1 = "UPDATE tasks SET description = :description, status = :status WHERE id = :id";
+            $sql1 = "UPDATE tasks SET status = :status WHERE id = :id";
             $stmt1 = $conn->prepare($sql1);
-            $stmt1->bindParam(':description', $description);
-            $stmt1->bindParam(':status', $status);
             $stmt1->bindParam(':id', $id);
+            $stmt1->bindParam(':status', $status);
+            // $stmt1->bindParam(':description', $description);
             $stmt1->execute();
 
-            $sql2 = "UPDATE pomodoro SET spected = :spected, current = :current WHERE task_id = :id";
-            $stmt2 = $conn->prepare($sql2);
-            $stmt2->bindParam(':spected', $spected);
-            $stmt2->bindParam(':current', $current);
-            $stmt2->bindParam(':id', $id);
-            $stmt2->execute();
+            // $sql2 = "UPDATE pomodoro SET spected = :spected, current = :current WHERE task_id = :id";
+            // $stmt2 = $conn->prepare($sql2);
+            // $stmt2->bindParam(':spected', $spected);
+            // $stmt2->bindParam(':current', $current);
+            // $stmt2->bindParam(':id', $id);
+            // $stmt2->execute();
 
-            $conn->commit();
+            // $conn->commit();
+
+
             echo json_encode(array("message" => "task updated successfully"));
         } catch (Exception $e) {
-            $conn->rollBack();
+            // $conn->rollBack();
             echo json_encode(array("message" => "error updating task: " . $e->getMessage()));
         }
 
