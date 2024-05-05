@@ -31,6 +31,13 @@ switch ($method) {
         $highlighted = filter_string_polyfill($data['highlighted']);
 
         try {
+
+            // sets all highlighted tasks to false
+            // !! This is not the most optimal but it is a temporary solution.
+            $sql = "UPDATE tasks SET highlighted = 0";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+
             $sql1 = "UPDATE tasks SET highlighted = :highlighted WHERE id = :id";
             $stmt1 = $conn->prepare($sql1);
             $stmt1->bindParam(':id', $id);
