@@ -1,14 +1,8 @@
 <?php
 require 'config/config.php';
+require 'conection.php';
 
-// database configuration with PDO driver
-try {
-    $conn = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASSWORD);
-    // Establecer el modo de error de PDO a excepción
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Conexión fallida: " . $e->getMessage());
-}
+ini_set('display_errors', 1);
 
 // Configurar cabeceras para permitir CORS (Cross-Origin Resource Sharing)
 header("Access-Control-Allow-Origin: *");
@@ -22,6 +16,9 @@ $method = $_SERVER['REQUEST_METHOD'];
 function filter_string_polyfill(string $string): string {
     return preg_replace("/[^A-Za-z0-9 ]/", '', $string);
 }
+
+// get conection instance
+$conn = DatabaseConnection::getInstance()->getConnection();
 
 // Manejar las solicitudes GET, POST, PUT, DELETE
 switch ($method) {
@@ -153,5 +150,3 @@ switch ($method) {
         echo json_encode(array("message" => "method not allowed"));
         break;
 }
-
-$conn = null; // Cerrar la conexión

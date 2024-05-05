@@ -1,5 +1,15 @@
 <?php
 
+require "conection.php";
+
+ini_set('display_errors', 1);
+
+// Configurar cabeceras para permitir CORS (Cross-Origin Resource Sharing)
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: POST, GET, PUT, DELETE");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+
 // Obtener el método de la solicitud
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -7,7 +17,9 @@ function filter_string_polyfill(string $string): string {
     return preg_replace("/[^A-Za-z0-9 ]/", '', $string);
 }
 
-// Manejar las solicitudes GET, POST, PUT, DELETE
+// get conection instance
+$conn = DatabaseConnection::getInstance()->getConnection();
+
 switch ($method) {
 
     case 'PUT':
@@ -16,7 +28,7 @@ switch ($method) {
         $data = json_decode($string, true);
 
         $id = filter_string_polyfill($data['id']);
-        $status = filter_string_polyfill($data['highlighted']);
+        $highlighted = filter_string_polyfill($data['highlighted']);
 
         try {
             $sql1 = "UPDATE tasks SET highlighted = :highlighted WHERE id = :id";
@@ -32,11 +44,7 @@ switch ($method) {
 
         break;
 
-        break;
-
     default:
         echo json_encode(array("message" => "method not allowed"));
         break;
 }
-
-// $conn = null; // Cerrar la conexión
