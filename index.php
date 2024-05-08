@@ -4,13 +4,13 @@ require 'conection.php';
 
 ini_set('display_errors', 1);
 
-// Configurar cabeceras para permitir CORS (Cross-Origin Resource Sharing)
+// Configure headers to allow CORS (Cross-Origin Resource Sharing)
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST, GET, PUT, DELETE");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-// Obtener el método de la solicitud
+// get request method
 $method = $_SERVER['REQUEST_METHOD'];
 
 function filter_string_polyfill(string $string): string {
@@ -20,18 +20,15 @@ function filter_string_polyfill(string $string): string {
 // get conection instance
 $conn = DatabaseConnection::getInstance()->getConnection();
 
-// Manejar las solicitudes GET, POST, PUT, DELETE
+// Handles GET, POST, PUT, DELETE requests
 switch ($method) {
     case 'GET':
-        // Obtener todas las tareas
         $stmt = $conn->query("SELECT * FROM tasks INNER JOIN pomodoro ON tasks.id = pomodoro.task_id");
         $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode($tasks);
         break;
 
     case 'POST':
-        // Crear una nueva tarea
-
         $string = file_get_contents("php://input");
         $data = json_decode($string, true);
 
@@ -70,8 +67,7 @@ switch ($method) {
         break;
 
 
-    case 'PUT':
-        // Editar una tarea existente
+    case 'PUT': 
         $string = file_get_contents("php://input");
         $data = json_decode($string, true);
 
@@ -102,7 +98,6 @@ switch ($method) {
 
             // $conn->commit();
 
-
             echo json_encode(array("message" => "task updated successfully"));
         } catch (Exception $e) {
             // $conn->rollBack();
@@ -112,14 +107,10 @@ switch ($method) {
         break;
 
     case 'DELETE':
-        // Eliminar una tarea
-
-        // obtenemos los datos del body
         $string = file_get_contents("php://input");
-        // convertimos a matriz asociativa
         $data = json_decode($string, true);
         $id = filter_string_polyfill($data['id']);
-        // Establecer una transacción para garantizar que ambas eliminaciones se realicen correctamente o se deshagan en caso de error
+        // Set a transaction to ensure both deletions succeed
         $conn->beginTransaction();
 
         try {
@@ -132,14 +123,12 @@ switch ($method) {
             $stmt2 = $conn->prepare($sql2);
             $stmt2->bindParam(':task_id', $id);
             $stmt2->execute();
-        
-            // Confirmar la transacción si ambas eliminaciones se realizaron correctamente
+            // confirm transaction
             $conn->commit();
 
             echo json_encode(array("message" => "task deleted successfully"));
         } catch (Exception $e) {
-            // revertir la transaccion en caso de error;
-
+            // roll back transaction in case of error;
             $conn->rollBack();
             echo json_encode(array("message" => "task could not be deleted: " . $e->getMessage()));
         }
