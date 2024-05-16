@@ -34,7 +34,7 @@ switch ($method) {
 
         $description = filter_string_polyfill($data['description']);
         $status = filter_string_polyfill($data['status']);
-        $spected = filter_string_polyfill($data['spected']);
+        $expected = filter_string_polyfill($data['expected']);
         $current = filter_string_polyfill($data['current']);
         $highlighted = filter_string_polyfill($data['highlighted']);
 
@@ -50,10 +50,10 @@ switch ($method) {
 
             $task_id = $conn->lastInsertId();
 
-            $sql2 = "INSERT INTO pomodoro (task_id, spected, current) VALUES (:task_id, :spected, :current)";
+            $sql2 = "INSERT INTO pomodoro (task_id, expected, current) VALUES (:task_id, :expected, :current)";
             $stmt2 = $conn->prepare($sql2);
             $stmt2->bindParam(':task_id', $task_id);
-            $stmt2->bindParam(':spected', $spected);
+            $stmt2->bindParam(':expected', $expected);
             $stmt2->bindParam(':current', $current);
             $stmt2->execute();
 
