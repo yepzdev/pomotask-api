@@ -13,7 +13,8 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 // get request method
 $method = $_SERVER['REQUEST_METHOD'];
 
-function filter_string_polyfill(string $string): string {
+function filter_string_polyfill(string $string): string
+{
     return preg_replace("/[^A-Za-z0-9 ]/", '', $string);
 }
 
@@ -67,7 +68,7 @@ switch ($method) {
         break;
 
 
-    case 'PUT': 
+    case 'PUT':
         $string = file_get_contents("php://input");
         $data = json_decode($string, true);
 
@@ -110,25 +111,28 @@ switch ($method) {
         $string = file_get_contents("php://input");
         $data = json_decode($string, true);
         $id = filter_string_polyfill($data['id']);
-        // Set a transaction to ensure both deletions succeed
+
         $conn->beginTransaction();
 
         try {
-            $sql1 = "DELETE FROM tasks WHERE id = :id";
-            $stmt1 = $conn->prepare($sql1);
-            $stmt1->bindParam(':id', $id);
-            $stmt1->execute();
+            // Delete records from the pomodoro table related to the task_id
+            $sql_delete_pomodoro = "DELETE FROM pomodoro WHERE task_id = :task_id";
+            $stmt_delete_pomodoro = $conn->prepare($sql_delete_pomodoro);
+            $stmt_delete_pomodoro->bindParam(':task_id', $id);
+            $stmt_delete_pomodoro->execute();
 
-            $sql2 = "DELETE FROM pomodoro WHERE task_id = :task_id";
-            $stmt2 = $conn->prepare($sql2);
-            $stmt2->bindParam(':task_id', $id);
-            $stmt2->execute();
-            // confirm transaction
+            // Then delete the record from the tasks table
+            $sql_delete_task = "DELETE FROM tasks WHERE id = :id";
+            $stmt_delete_task = $conn->prepare($sql_delete_task);
+            $stmt_delete_task->bindParam(':id', $id);
+            $stmt_delete_task->execute();
+
+            // Confirm the transactionbla tasks
             $conn->commit();
 
             echo json_encode(array("message" => "task deleted successfully"));
         } catch (Exception $e) {
-            // roll back transaction in case of error;
+            // Revert transaction in case of error
             $conn->rollBack();
             echo json_encode(array("message" => "task could not be deleted: " . $e->getMessage()));
         }
