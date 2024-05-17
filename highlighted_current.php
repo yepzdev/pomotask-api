@@ -32,7 +32,18 @@ switch ($method) {
             $stmt->bindParam(':task_id', $id);
             $stmt->execute();
 
-            echo json_encode(array("message" => "task updated successfully"));
+            $sql2 = "SELECT * FROM pomodoro WHERE task_id = :task_id";
+            $stmt2 = $conn->prepare($sql2);
+            $stmt2->bindParam(":task_id", $id);
+            $stmt2->execute();
+
+            $result = $stmt2->fetch(PDO::FETCH_ASSOC);
+
+            if ($result) {
+                echo json_encode($result);
+            } else {
+                echo json_encode(array("message" => "No records found"));
+            }
         } catch (Exception $e) {
             echo json_encode(array("message" => "error updating task: " . $e->getMessage()));
         }
