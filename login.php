@@ -14,14 +14,16 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 $conn = DatabaseConnection::getInstance()->getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_POST['username'];
     $email = $_POST['email'];
-    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+    $password = $_POST['password'];
 
-    $stmt = $pdo->prepare("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)");
-    if ($stmt->execute([$username, $email, $password])) {
-        echo json_encode(['success' => true]);
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->execute([$email]);
+    $user = $stmt->fetch();
+
+    if ($user && password_verify($password, $user['password_hash'])) {
+        echo json_encode(['success' => true, 'user_id' => $user['id']]);
     } else {
-        echo json_encode(['success' => false, 'error' => 'Registration failed']);
+        echo json_encode(['success' => false, 'error' => 'Invalid credentials']);
     }
 }
