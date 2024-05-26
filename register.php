@@ -29,11 +29,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    
+
     if (!preg_match('/[A-Z]/', $password)) {
         echo json_encode(['success' => false, 'error' => 'Password must contain at least one uppercase letter']);
         exit();
     }
+
+    if (!preg_match('/[a-z]/', $password)) {
+        echo json_encode(['success' => false, 'error' => 'Password must contain at least one lowercase letter']);
+        exit();
+    }
+
 
     // $stmt = $pdo->prepare("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)");
     // if ($stmt->execute([$username, $email, $password])) {
