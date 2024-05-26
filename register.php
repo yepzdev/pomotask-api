@@ -50,6 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
+    // encrypting password
+    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+
 
     // $stmt = $pdo->prepare("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)");
     // if ($stmt->execute([$username, $email, $password])) {
