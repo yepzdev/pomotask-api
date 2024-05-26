@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // verify password length
     if (strlen($password) < 6) {
-        echo json_encode(['success' => false, 'error' => 'Password must be at least 8 characters long']);
+        echo json_encode(['success' => false, 'error' => 'Password must be at least 6 characters long']);
         exit();
     }
 
@@ -42,6 +42,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (!preg_match('/[0-9]/', $password)) {
         echo json_encode(['success' => false, 'error' => 'Password must contain at least one number']);
+        exit();
+    }
+
+    if ($password !== $confirm_password) {
+        echo json_encode(['success' => false, 'error' => 'Passwords do not match']);
         exit();
     }
 
