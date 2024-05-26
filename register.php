@@ -22,14 +22,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $data['email'];
     $password = $data['password'];
     $confirm_password = $data['confirm_password'];
-    // $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
-     // Verificación de contraseña
-     if (strlen($password) < 6) {
+    // verify password length
+    if (strlen($password) < 6) {
         echo json_encode(['success' => false, 'error' => 'Password must be at least 8 characters long']);
         exit();
     }
 
+    
+    if (!preg_match('/[A-Z]/', $password)) {
+        echo json_encode(['success' => false, 'error' => 'Password must contain at least one uppercase letter']);
+        exit();
+    }
 
     // $stmt = $pdo->prepare("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)");
     // if ($stmt->execute([$username, $email, $password])) {
