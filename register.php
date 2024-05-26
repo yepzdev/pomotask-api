@@ -14,14 +14,27 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 $conn = DatabaseConnection::getInstance()->getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
-    $stmt = $pdo->prepare("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)");
-    if ($stmt->execute([$username, $email, $password])) {
-        echo json_encode(['success' => true]);
-    } else {
-        echo json_encode(['success' => false, 'error' => 'Registration failed']);
+    $string = file_get_contents("php://input");
+    $data = json_decode($string, true);
+
+    $username = $data['username'];
+    $email = $data['email'];
+    $password = $data['password'];
+    $confirm_password = $data['confirm_password'];
+    // $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+
+     // Verificación de contraseña
+     if (strlen($password) < 6) {
+        echo json_encode(['success' => false, 'error' => 'Password must be at least 8 characters long']);
+        exit();
     }
+
+
+    // $stmt = $pdo->prepare("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)");
+    // if ($stmt->execute([$username, $email, $password])) {
+    //     echo json_encode(['success' => true]);
+    // } else {
+    //     echo json_encode(['success' => false, 'error' => 'Registration failed']);
+    // }
 }
