@@ -40,6 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
+    if (!preg_match('/[0-9]/', $password)) {
+        echo json_encode(['success' => false, 'error' => 'Password must contain at least one number']);
+        exit();
+    }
+
 
     // $stmt = $pdo->prepare("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)");
     // if ($stmt->execute([$username, $email, $password])) {
