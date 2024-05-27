@@ -14,12 +14,18 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 $conn = DatabaseConnection::getInstance()->getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    
+
     $string = file_get_contents("php://input");
     $user_data = json_decode($string, true);
 
-    $email = $user_data['email'];
-    $password = $user_data['password'];
+    $email = $user_data['email'] ?? '';
+    $password = $user_data['password'] ?? '';
+
+    // Verify that the fields are not empty
+    if (empty($email) || empty($password)) {
+        echo json_encode(['success' => false, 'message' => 'Email and password are required']);
+        exit();
+    }
 
     $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
     $stmt->execute([$email]);
