@@ -16,12 +16,12 @@ $conn = DatabaseConnection::getInstance()->getConnection();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $string = file_get_contents("php://input");
-    $data = json_decode($string, true);
+    $user = json_decode($string, true);
 
-    $username = $data['username'];
-    $email = $data['email'];
-    $password = $data['password'];
-    $confirm_password = $data['confirm_password'];
+    $name = $user['name'];
+    $email = $user['email'];
+    $password = $user['password'];
+    $confirm_password = $user['confirm_password'];
 
     // verify password length
     if (strlen($password) < 6) {
@@ -51,13 +51,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // encrypting password
-    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+    $encrypted_password = password_hash($password, PASSWORD_BCRYPT);
 
 
-    // $stmt = $pdo->prepare("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)");
-    // if ($stmt->execute([$username, $email, $password])) {
-    //     echo json_encode(['success' => true]);
-    // } else {
-    //     echo json_encode(['success' => false, 'error' => 'Registration failed']);
-    // }
+    $stmt = $conn->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
+    if ($stmt->execute([$name, $email, $encrypted_password])) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Registration failed']);
+    }
 }
