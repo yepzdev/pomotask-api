@@ -14,14 +14,18 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 $conn = DatabaseConnection::getInstance()->getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    
+    $string = file_get_contents("php://input");
+    $user_data = json_decode($string, true);
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+    $email = $user_data['email'];
+    $password = $user_data['password'];
+
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 
-    if ($user && password_verify($password, $user['password_hash'])) {
+    if ($user && password_verify($password, $user['password'])) {
         echo json_encode(['success' => true, 'user_id' => $user['id']]);
     } else {
         echo json_encode(['success' => false, 'error' => 'Invalid credentials']);
