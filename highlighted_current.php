@@ -9,10 +9,6 @@ setHeaders();
 
 $method = $_SERVER['REQUEST_METHOD'];
 
-function filter_string_polyfill(string $string): string {
-    return preg_replace("/[^A-Za-z0-9 ]/", '', $string);
-}
-
 $conn = Connection::getInstance()->getConnection();
 
 switch ($method) {

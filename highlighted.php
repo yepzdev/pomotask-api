@@ -10,10 +10,6 @@ setHeaders();
 // Obtener el método de la solicitud
 $method = $_SERVER['REQUEST_METHOD'];
 
-function filter_string_polyfill(string $string): string {
-    return preg_replace("/[^A-Za-z0-9 ]/", '', $string);
-}
-
 // get conection instance
 $conn = Connection::getInstance()->getConnection();
 
