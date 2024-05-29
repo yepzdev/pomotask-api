@@ -26,10 +26,10 @@ switch ($method) {
         $data = json_decode($string, true);
 
         $description = filter_string_polyfill($data['description']);
-        $status = filter_string_polyfill($data['status']);
-        $expected = filter_string_polyfill($data['expected']);
-        $current = filter_string_polyfill($data['current']);
-        $highlighted = filter_string_polyfill($data['highlighted']);
+        $status = filter_integer($data['status']);
+        $expected = filter_integer($data['expected']);
+        $current = filter_integer($data['current']);
+        $highlighted = filter_integer($data['highlighted']);
 
         $conn->beginTransaction();
 
@@ -64,8 +64,8 @@ switch ($method) {
         $string = file_get_contents("php://input");
         $data = json_decode($string, true);
 
-        $id = filter_string_polyfill($data['id']);
-        $status = filter_string_polyfill($data['status']);
+        $id = filter_integer($data['id']);
+        $status = filter_integer($data['status']);
         // $description = filter_string_polyfill($data['description']);
         // $spected = filter_string_polyfill($data['spected']);
         // $current = filter_string_polyfill($data['current']);
@@ -102,7 +102,7 @@ switch ($method) {
     case 'DELETE':
         $string = file_get_contents("php://input");
         $data = json_decode($string, true);
-        $id = filter_string_polyfill($data['id']);
+        $id = filter_integer($data['id']);
 
         $conn->beginTransaction();
 

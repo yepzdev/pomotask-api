@@ -17,7 +17,7 @@ switch ($method) {
         $string = file_get_contents("php://input");
         $data = json_decode($string, true);
 
-        $id = filter_string_polyfill($data['id']);
+        $id = filter_integer($data['id']);
 
         try {
 
