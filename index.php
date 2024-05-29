@@ -16,7 +16,7 @@ function filter_string_polyfill(string $string): string
 }
 
 // get conection instance
-$conn = DatabaseConnection::getInstance()->getConnection();
+$conn = Connection::getInstance()->getConnection();
 
 // Handles GET, POST, PUT, DELETE requests
 switch ($method) {

@@ -8,7 +8,7 @@ ini_set('display_errors', 1);
 
 setHeaders();
 
-$conn = DatabaseConnection::getInstance()->getConnection();
+$conn = Connection::getInstance()->getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

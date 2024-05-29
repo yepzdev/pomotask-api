@@ -4,7 +4,7 @@ require "config/config.php";
 
 ini_set('display_errors', 1);
 
-class DatabaseConnection {
+class Connection {
   private static $instance = null;
   private $conn;
 

@@ -15,7 +15,7 @@ function filter_string_polyfill(string $string): string {
 }
 
 // get conection instance
-$conn = DatabaseConnection::getInstance()->getConnection();
+$conn = Connection::getInstance()->getConnection();
 
 switch ($method) {
 
