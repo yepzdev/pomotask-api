@@ -7,11 +7,9 @@ ini_set('display_errors', 1);
 
 setHeaders();
 
-$method = $_SERVER['REQUEST_METHOD'];
-
 $conn = Connection::getInstance()->getConnection();
 
-switch ($method) {
+switch ($_SERVER['REQUEST_METHOD']) {
 
     case 'PUT':
         $string = file_get_contents("php://input");
@@ -21,6 +19,7 @@ switch ($method) {
 
         try {
 
+            // increases the number of current pomodoros of the highlighted task
             $sql = "UPDATE pomodoro SET current = current +1 WHERE task_id = :task_id";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':task_id', $id);
